@@ -1,5 +1,3 @@
-package com.distributetsystems.zookeeperexample;
-
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 
@@ -10,12 +8,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by novy on 06.06.15.
+ * Created by Mateusz on 29.05.16.
  */
 public class Main {
 
     public static void main(String[] args) throws IOException, KeeperException, InterruptedException {
-        if (args.length < 4) {
+        if (args.length < 3) {
             System.err.println("USAGE: Main connectionString znode program [args ...]");
             System.exit(2);
         }
@@ -28,9 +26,9 @@ public class Main {
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(
                 new Executor(znode, zooKeeper, exec, Runtime.getRuntime())
-        );
+        ); //zadanie z asynchronicznym wykonaniem
 
-        final StructurePrinter structurePrinter = new StructurePrinter(zooKeeper);
+        final StructurePrinter structurePrinter = new StructurePrinter(zooKeeper); //wypisywanie struktury drzewa
         final Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -42,9 +40,9 @@ public class Main {
                     structurePrinter.printStructure(znode);
                     break;
                 case "Q":
-                    executorService.shutdownNow();
-                    executorService.awaitTermination(10, TimeUnit.SECONDS);
-                    System.exit(0);
+                    executorService.shutdownNow();//zamykamy asynchronicznego executora
+                    executorService.awaitTermination(2, TimeUnit.SECONDS); // czekamy 2 sek
+                    System.exit(0); //wychodzimy
                 default:
                     System.out.println("Incorrect choice");
             }

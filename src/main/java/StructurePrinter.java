@@ -1,11 +1,10 @@
-package com.distributetsystems.zookeeperexample;
-
 import com.google.common.base.Strings;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 
+
 /**
- * Created by novy on 07.06.15.
+ * Created by Mateusz on 29.05.16.
  */
 public class StructurePrinter {
 
@@ -25,10 +24,13 @@ public class StructurePrinter {
         System.out.print(
                 Strings.repeat("\t", indent)
         );
-        System.out.println(path);
-
-        for (String child : zooKeeper.getChildren(path, false)) {
-            printStructure(path + "/" + child, indent + 1);
+        try {
+            for (String child : zooKeeper.getChildren(path, false)) {
+                printStructure(path + "/" + child, indent + 1);
+            }
+            System.out.println(path);
+        }catch (Exception e){
+            System.out.println("BRAK ZNODA");
         }
     }
 }

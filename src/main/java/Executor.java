@@ -1,7 +1,5 @@
-package com.distributetsystems.zookeeperexample;
-
-import com.distributetsystems.zookeeperexample.watchers.ChildrenWatcher;
-import com.distributetsystems.zookeeperexample.watchers.TaskCoordinator;
+import watchers.ChildrenWatcher;
+import watchers.TaskCoordinator;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -10,7 +8,7 @@ import org.apache.zookeeper.ZooKeeper;
 import java.io.IOException;
 
 /**
- * Created by novy on 06.06.15.
+ * Created by Mateusz on 29.05.16.
  */
 public class Executor implements Runnable, Watcher {
 
@@ -28,7 +26,7 @@ public class Executor implements Runnable, Watcher {
         this.zooKeeper = zooKeeper;
         zooKeeper.register(this);
         taskCoordinator = new TaskCoordinator(znode, commandToExecute, executionContext);
-        childrenWatcher = new ChildrenWatcher(znode);
+        childrenWatcher = new ChildrenWatcher(znode,zooKeeper);
         zooKeeper.exists(znode, true, null, this);
     }
 
@@ -38,9 +36,8 @@ public class Executor implements Runnable, Watcher {
     }
 
     public void process(WatchedEvent event) {
-        taskCoordinator.process(event);
-        zooKeeper.exists(znode, true, null, this);
-        zooKeeper.getChildren(znode, true, childrenWatcher, this);
-
+        taskCoordinator.process(event); //przekazujemy event do uruchomienia Aplikacji mozna tez zrobic jako StatCallback w .exists ale nie czaje jak jest informacja przekazana o utworzeniu znode
+        zooKeeper.exists(znode, true, null, this);//zwracan informacje o znode
+        zooKeeper.getChildren(znode, true, childrenWatcher, this); //zwracan liste dzieci, asynchronicznie
     }
 }
